@@ -1,0 +1,65 @@
+
+id=25700
+example=Aug 27 06:25:50 192.168.254.50 packet_log: 2019-08-27T06:25:50.973129-0400 action=dropped, direction=inbound, group_uid=GRP_DEF_INGRESS, group="DEFAULT_INBOUND", proto=IPv6-ICMP, country="RESERVED", as_num=0, as_name="Unknown", reason=country, src=fe80::f282:61ff:fe56:9532, dst=ff02::1
+name=Bandura TIG - Blocked IPv6-ICMP
+match=packet_log:
+match=action
+match=dropped
+match=proto=IPv6
+match=reason
+regex=src=([a-f0-9\:]+), dst=([a-f0-9\:]+)
+log=event:Bandura_Blocked_IPv6 type:intrusion srcip:$1 dstip:$2
+
+NEXT
+
+id=25701
+example=Aug 27 06:26:46 192.168.254.50 packet_log: 2019-08-27T06:26:46.558467-0400 action=dropped, direction=inbound, group_uid=GRP_DEF_INGRESS, group="DEFAULT_INBOUND", proto=UDP, country="RESERVED", as_num=0, as_name="Unknown", reason=country, src=fe80::1041:f8e4:6d62:4549, dst=ff02::1:2, src_port=546, dst_port=547
+name=Bandura TIG - Blocked UDP
+match=packet_log:
+match=action=dropped
+match=proto=UDP
+match=reason
+regex=src=([^,]+), dst=([^,]+)
+log=event:Bandura_Blocked_UDP type:intrusion srcip:$1 dstip:$2
+
+
+NEXT
+
+id=25702
+example=Aug 27 06:52:31 192.168.254.50 packet_log: 2019-08-27T06:52:31.859636-0400 action=dropped, direction=outbound, group_uid=GRP_DEF_EGRESS_, group="DEFAULT_OUTBOUND", proto=TCP, country="UNITED STATES", as_num=16509, as_name="Amazon.com, Inc.", reason=ip_rep, src=192.168.254.133, dst=13.249.98.42, src_port=32981, dst_port=80, flags=SYN
+name=Bandura TIG - Blocked TCP
+match=packet_log:
+match=action=dropped
+match=proto=TCP
+match=reason
+regex=src=([^,]+), dst=([^,]+)
+log=event:Bandura_Blocked_TCP type:intrusion srcip:$1 dstip:$2
+
+
+NEXT
+
+id=25703
+name=Bandura TIG - Blocked domain
+match=domain_log:
+match=action=dropped
+match=reason
+match=domain=
+regex=src=([^,]+), dst=([^,]+)
+log=event:Bandura_Blocked_Domain type:intrusion srcip:$1 dstip:$2
+
+
+
+NEXT
+
+id=25704
+example=Aug 27 06:52:31 192.168.254.50 riskinfo: 2019-08-27T06:52:31.859792-0400 action=dropped, direction=outbound, group_uid=GRP_DEF_EGRESS_, group="DEFAULT_OUTBOUND", proto=TCP, country="UNITED STATES", as_num=16509, as_name="Amazon.com, Inc.", src=192.168.254.133, dst=13.249.98.42, category_id=4, category_name="Endpoint Exploits", risk_score=100, risk_threshold=90, src_port=32981, dst_port=80, flags=SYN
+match=riskinfo:
+match=action=dropped
+match=country=
+match=as_name
+match=risk_score
+regex=src=([^,]+), dst=([^,]+)
+log=event:Bandura_Blocked_risk type:intrusion srcip:$1 dstip:$2
+
+
+
